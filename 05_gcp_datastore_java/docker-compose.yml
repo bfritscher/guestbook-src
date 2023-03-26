@@ -2,6 +2,9 @@ services:
   spring:
     build: .
     command: ["./mvnw", "spring-boot:run"]
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/apikey.json
+      - GUESTBOOK_SERVICE=firestore
     ports:
       - "8080:8080"
     volumes:

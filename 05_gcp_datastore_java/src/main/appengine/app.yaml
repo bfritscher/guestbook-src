@@ -2,7 +2,8 @@ runtime: java17
 env: standard
 
 env_variables:
-  - GUESTBOOK_SERVICE: firestore
+  GUESTBOOK_SERVICE: "firestore"
+
 # Spin up 2 instances
 manual_scaling:
   instances: 2
