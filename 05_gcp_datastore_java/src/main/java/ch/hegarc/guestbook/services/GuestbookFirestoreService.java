@@ -1,13 +1,12 @@
-package ch.hegarc.guestbook;
+package ch.hegarc.guestbook.services;
 
 import ch.hegarc.guestbook.models.Entry;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import org.springframework.stereotype.Service;
 
-import static ch.hegarc.guestbook.Persistence.getFirestore;
+import static ch.hegarc.guestbook.FirestorePersistence.getFirestore;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
@@ -15,7 +14,7 @@ import java.util.List;
 
 
 @Service
-public class GuestbookService {
+public class GuestbookFirestoreService implements GuestbookService {
 
     public List<Entry> select() {
         List<Entry> entries = new ArrayList<Entry>();

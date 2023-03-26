@@ -7,7 +7,17 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Objects;
 
+import org.hibernate.annotations.GenericGenerator;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "entries")
 public class Entry {
+    @Id
+    @GeneratedValue(generator="system-uuid")
+    @GenericGenerator(name="system-uuid", strategy = "uuid2")
+    private String id;
     private String name;
     private String email;
     private String message;
@@ -29,6 +39,14 @@ public class Entry {
         this.email = email;
         this.message = message;
         this.signedOn = signedOn;
+    }
+
+    public String getId() {
+        return id;
+      }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
