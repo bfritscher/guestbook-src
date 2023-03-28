@@ -1,25 +1,27 @@
-apiVersion: v1
-kind: ReplicationController
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: guestbook-replicas
+  name: guestbook-deployment
+  labels:
+    app: guestbook
 spec:
   replicas: 3
+  selector:
+    matchLabels:
+      app: guestbook
   template:
     metadata:
       labels:
         app: guestbook
-        tier: frontend
     spec:
       containers:
-      - name: guestbook-app
-        image: gcr.io/YOUR_PROJECT_ID/gcp_gb
-        env:
-        - name: PROCESSES
-          value: guestbook
-        - name: PORT
-          value: "8000"
-        ports:
-        - containerPort: 8000
+        - name: guestbook-app
+          image: gcr.io/YOUR_PROJECT_ID/gcp_gb
+          env:
+            - name: PORT
+              value: "8000"
+          ports:
+            - containerPort: 8000
 ---
 apiVersion: v1
 kind: Service
@@ -27,12 +29,10 @@ metadata:
   name: guestbook-lb
   labels:
     app: guestbook
-    tier: frontend
 spec:
   type: LoadBalancer
   ports:
-  - port: 80
-    targetPort: 8000
+    - port: 80
+      targetPort: 8000
   selector:
     app: guestbook
-    tier: frontend
