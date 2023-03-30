@@ -1,0 +1,79 @@
+version: "3.9"
+volumes:
+  db_data:
+  certs:
+  vhost.d:
+  acme:
+  html:  
+networks:
+  frontend:
+  backend:  
+services:
+  web:
+    image: nginxproxy/nginx-proxy
+    restart: always
+    labels:
+      com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: "true"
+    volumes:
+      - certs:/etc/nginx/certs:ro
+      - vhost.d:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro      
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - frontend
+      - backend
+  letsencrypt-companion:
+    image: nginxproxy/acme-companion
+    restart: always
+    volumes:
+      - certs:/etc/nginx/certs
+      - acme:/etc/acme.sh
+      - vhost.d:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - frontend
+    depends_on:
+      - web      
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.alpine
+    environment:
+      - DB_HOST=db
+      - DB_USER=guestbook
+      - DB_NAME=guestbook
+      - DB_PASS=guestbook
+      - DB_PORT=5432
+      - GUESTBOOK_SERVICE=postgres
+      - VIRTUAL_HOST=
+      - VIRTUAL_PORT=5000
+      - LETSENCRYPT_HOST=
+      - LETSENCRYPT_EMAIL=
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      replicas: 2
+    networks:
+      - backend    
+    restart: always
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=guestbook
+      - POSTGRES_PASSWORD=guestbook
+      - POSTGRES_DB=guestbook
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "guestbook"]
+      interval: 10s
+      timeout: 5s
+      retries: 5    
+    networks:
+      - backend

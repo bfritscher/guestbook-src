@@ -1,0 +1,35 @@
+version: "3.9"
+volumes:
+  db_data:
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.alpine
+    environment:
+      - DB_HOST=db
+      - DB_USER=guestbook
+      - DB_NAME=guestbook
+      - DB_PASS=guestbook
+      - DB_PORT=5432
+      - GUESTBOOK_SERVICE=postgres
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "5000:5000"       
+    restart: always
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=guestbook
+      - POSTGRES_PASSWORD=guestbook
+      - POSTGRES_DB=guestbook
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "guestbook"]
+      interval: 10s
+      timeout: 5s
+      retries: 5    

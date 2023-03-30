@@ -2,7 +2,7 @@
 FROM google/cloud-sdk
 
 # Specify your e-mail address as the maintainer of the container image
-LABEL maintainer="yourname@pdx.edu"
+LABEL maintainer="yourname@he-ar.ch"
 
 # Copy the contents of the current directory into the container directory /app
 COPY . /app
