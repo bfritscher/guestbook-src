@@ -4,3 +4,4 @@ env
 entries.db
 guestbook.db
 __pycache__
+apikey.json

@@ -1,4 +1,8 @@
-model_backend = 'sqlite3'
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+model_backend = os.getenv('GUESTBOOK_SERVICE', 'sqlite3')
 # model_backend = 'postgres'
 # model_backend = 'pylist'
 
