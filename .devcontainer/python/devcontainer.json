@@ -12,8 +12,6 @@
 	"forwardPorts": [
 		5000
 	],
-	"workspaceMount": "source=${localWorkspaceFolder}/sub-folder,target=/workspace,type=bind",
-	"workspaceFolder": "/workspace",
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": "pip3 install --user -r 04_container_docker/requirements.txt",
 
