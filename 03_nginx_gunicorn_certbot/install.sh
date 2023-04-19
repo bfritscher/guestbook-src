@@ -25,7 +25,7 @@ sed s+PROJECT_HOST+$1+ etc/nginx.template | sed s+PROJECT_DIR+$PWD+ > /etc/nginx
 ln -s /etc/nginx/sites-available/$SITE /etc/nginx/sites-enabled
 
 # fix 502 gateway error sock access permission
-chmod 755 $HOME
+chmod 755 -R $HOME
 
 # Restart all services
 systemctl start $SITE
