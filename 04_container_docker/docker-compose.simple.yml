@@ -22,11 +22,6 @@ services:
     environment:
       - POSTGRES_USER=guestbook
       - POSTGRES_PASSWORD=guestbook
-      - POSTGRES_DB=guestbook
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5      
+      - POSTGRES_DB=guestbook    
     volumes:
       - db_data:/var/lib/postgresql/data
