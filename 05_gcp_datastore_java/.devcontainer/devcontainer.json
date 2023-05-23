@@ -10,6 +10,10 @@
 			"version": "none",
 			"installMaven": "true",
 			"installGradle": "false"
+		},
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
+		"ghcr.io/dhoeric/features/google-cloud-cli:1": {
+			"version": "latest"
 		}
 	},
 	"containerEnv": {
