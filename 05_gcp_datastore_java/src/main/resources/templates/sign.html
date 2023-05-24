@@ -1,9 +1,12 @@
 {{#layout}}
     <h2>Sign Guestbook</h2>
-    <form action="/sign" method="post" class="box" enctype="application/x-www-form-urlencoded">
+    <form action="/sign/" method="post" class="box" enctype="application/x-www-form-urlencoded">
         <label><span>Name:</span><input type="text" name="name" required /></label>
         <label><span>Email:</span><input type="email" name="email" /></label>
         <label><span>Message:</span><textarea name="message" required></textarea></label>
         <label><span></span><input type="submit" value="Sign" /></label>
     </form>
+    <footer>
+        ServiceClass: {{ service }}
+    </footer>
 {{/layout}}

@@ -43,13 +43,14 @@ public class MainController {
 		return "index";
 	}
 
-    @GetMapping("/sign")
+    @GetMapping("/sign/")
     public String sign(Model model) {
         model.addAttribute("entry", new Entry());
+        model.addAttribute("service", getGuestbookService().getClass().getName());
         return "sign";
     }
 
-    @PostMapping( "/sign")
+    @PostMapping( "/sign/")
     public String signProcess(@ModelAttribute Entry entry) {
         getGuestbookService().insert(entry);
         return "redirect:/";
