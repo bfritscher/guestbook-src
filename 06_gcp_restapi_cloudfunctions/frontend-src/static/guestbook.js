@@ -1,6 +1,6 @@
 "use strict";
 
-// fill in your API Gateway endpoint here
+// fill in your API Gateway endpoint here without trailing slash
 const baseApiUrl = "<FMI>"; 
 
 /** Display the guestbook entries
@@ -43,7 +43,7 @@ const sign = async () => {
   const button  = document.querySelector("input[type=submit]");
   button.style.display = "none";
 
-  await fetch(baseApiUrl + "entry", {
+  await fetch(baseApiUrl + "/entry", {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json"
@@ -66,7 +66,7 @@ document.querySelector("input[type=submit]").addEventListener("click", sign);
 const getEntries = async () => {
   const entriesNode = document.getElementById("entries");
   entriesNode.innerHTML = "Loading entries...";
-  const response = await fetch(baseApiUrl + "entries", {
+  const response = await fetch(baseApiUrl + "/entries", {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json"
