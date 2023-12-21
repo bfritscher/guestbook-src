@@ -1,3 +1,4 @@
 functions-framework
 flask
 google-cloud-firestore
+requests
