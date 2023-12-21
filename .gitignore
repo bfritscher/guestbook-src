@@ -1,6 +1,7 @@
 *.pyc
 *.db
 env
+venv
 entries.db
 guestbook.db
 __pycache__
