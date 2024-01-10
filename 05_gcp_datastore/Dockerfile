@@ -1,8 +1,7 @@
-# Use Google Cloud SDK's container as the base image
-FROM google/cloud-sdk
+FROM python:3.12-slim
 
 # Specify your e-mail address as the maintainer of the container image
-LABEL maintainer="yourname@he-ar.ch"
+LABEL maintainer="yourname@he-arc.ch"
 
 # Copy the contents of the current directory into the container directory /app
 COPY . /app
@@ -11,7 +10,7 @@ COPY . /app
 WORKDIR /app
 
 # Install the Python packages specified by requirements.txt into the container
-RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && apt update --allow-releaseinfo-change -y && apt install -y python3-pip && pip3 install -r requirements.txt
+RUN pip3 install -r requirements.txt
 
 # Set the parameters to the program
 CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 app:app
