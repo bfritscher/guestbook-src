@@ -1,8 +1,8 @@
 #!/bin/bash
 # Installs on Debian/Ubuntu VM
 # Make sure script is called with DNS name desired
-if [ $# -ne 2 ]; then
-    echo "Usage: sudo install.sh <DNS_Name> <Email_Address>"
+if [ $# -ne 1 ]; then
+    echo "Usage: sudo install.sh <DNS_Name>"
 fi
 
 # Name the service based on first part of DNS name
@@ -24,14 +24,9 @@ sed s+PROJECT_USER+$SUDO_USER+ etc/systemd.template | sed s+PROJECT_DIR+$PWD+ > 
 sed s+PROJECT_HOST+$1+ etc/nginx.template | sed s+PROJECT_DIR+$PWD+ > /etc/nginx/sites-available/$SITE
 ln -s /etc/nginx/sites-available/$SITE /etc/nginx/sites-enabled
 
-# fix 502 gateway error sock access permission
-chmod 755 -R $HOME
-
 # Restart all services
 systemctl start $SITE
 systemctl enable $SITE
 systemctl restart nginx
-
-certbot --nginx -d $1 --noninteractive -m $2 --agree-tos --redirect
 
 echo "Installation complete."
