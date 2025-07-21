@@ -2,7 +2,7 @@
 FROM python:alpine
 
 # Specify your e-mail address as the maintainer of the container image
-MAINTAINER Your Name "yourname@pdx.edu"
+LABEL maintainer="yourname@he-arc.ch"
 
 # Copy the contents of the current directory into the container directory /app
 COPY . /app
@@ -14,4 +14,4 @@ WORKDIR /app
 RUN pip install -r requirements.txt
 
 # Set the parameters to the program
-CMD exec gunicorn --bind :${PORT:-80} --workers 1 --threads 8 application:application
+CMD exec gunicorn --bind :${PORT:-80} --workers 1 --threads 8 app:app

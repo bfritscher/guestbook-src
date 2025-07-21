@@ -1,8 +1,8 @@
 from .Model import Model
-from datetime import datetime
+from datetime import datetime, timezone
 import boto3
 
-class model(Model):
+class ModelDynamoDB(Model):
     def __init__(self):
         self.resource = boto3.resource("dynamodb", region_name="us-east-1")
         self.table = self.resource.Table('guestbook')
@@ -43,13 +43,26 @@ class model(Model):
         except Exception as e:
             return([['scan failed', '.', '.', '.']])
 
-        return([ [f['name'], f['email'], f['date'], f['message']] for f in gbentries['Items']])
+        # Parse the date string back to datetime object
+        result = []
+        for f in gbentries['Items']:
+            try:
+                # Parse ISO format
+                date_obj = datetime.fromisoformat(f['date'].replace('Z', '+00:00'))
+            except (ValueError, KeyError):
+                date_obj = datetime.now()
+            
+            result.append([f['name'], f['email'], date_obj, f['message']])
+        
+        # in memory sort for demo app, but should be done via Global Secondary Index Partition
+        result.sort(key=lambda x: x[2])
+        return result
 
     def insert(self,name,email,message):
         gbitem = {
             'name' : name,
             'email' : email,
-            'date' : str(datetime.today()),
+            'date' : datetime.now(timezone.utc).isoformat(),
             'message' : message
             }
 

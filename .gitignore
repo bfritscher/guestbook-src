@@ -2,6 +2,7 @@
 *.db
 env
 venv
+.venv
 entries.db
 guestbook.db
 __pycache__
