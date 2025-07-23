@@ -1,12 +1,29 @@
 #!/bin/bash
 # Installs on Debian/Ubuntu VM
+# Check if running as root
+if [ "$EUID" -ne 0 ]; then
+    echo "Error: This script must be run as root (use sudo)"
+    exit 1
+fi
+
 # Make sure script is called with DNS name desired
 if [ $# -ne 1 ]; then
     echo "Usage: sudo install.sh <DNS_Name>"
+    echo "Example: sudo install.sh myapp.example.com"
+    exit 1
+fi
+
+DNS_NAME="$1"
+
+# Check that domain name contains at least one dot (is FQDN)
+if [[ "$DNS_NAME" != *.* ]]; then
+    echo "Error: Domain name must be fully qualified (contain at least one dot)"
+    echo "Example: myapp.example.com, not just 'myapp'"
+    exit 1
 fi
 
 # Name the service based on first part of DNS name
-SITE=`echo $1 | sed -e 's/\..*//'`
+SITE=`echo $1 | sed -e 's/\..*//' | tr '-' '_'`
 
 # Install all required system packages
 apt-get update
