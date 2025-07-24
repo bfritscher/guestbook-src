@@ -1,0 +1,10 @@
+services:
+  spring:
+    build: .
+    command: ["./mvnw", "spring-boot:run"]
+    environment:
+      - GUESTBOOK_SERVICE=dynamodb
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
