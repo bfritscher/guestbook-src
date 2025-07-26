@@ -1,0 +1,27 @@
+[all:vars]
+# --- OpenStack Provisioning Vars ---
+os_cloud = "engines"
+os_image = "Ubuntu Noble 24.04 (SWITCHengines)"
+os_flavor = "m1.medium"
+os_key_name = "your_key_name" # SSH key pair name in your SWITCHengines
+os_network = "private"
+os_sec_groups = ["default", "k3s-sg"]
+os_network_cidr = "10.0.0.0/16"
+
+k3s_server_count = 1
+k3s_agent_count = 2
+
+ansible_user = "ubuntu" # User for SSH connections (e.g., ubuntu, debian, centos)
+ansible_host_key_checking = false
+ansible_ssh_private_key_file = "~/.ssh/id_rsa"
+
+# --- K3s Cluster Vars ---
+k3s_version = v1.32.6+k3s1
+api_endpoint = "{{ hostvars[groups['server'][0]]['ansible_host'] | default(groups['server'][0]) }}"
+
+# --- Rancher Vars ---
+helm_version = "v3.17.4"
+cert_manager_version = "v1.18.2"
+rancher_chart_version = "2.11.3"
+rancher_hostname = "rancher_username.duckdns.org" # Your domain pointing to server-1 ip
+rancher_bootstrap_password = "AStrongPassword123!"

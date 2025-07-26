@@ -1,0 +1,11 @@
+plugin: openstack.cloud.openstack
+expand_hostvars: false
+fail_on_errors: true
+all_projects: false
+legacy_groups: false
+ip_type: "floating"
+keyed_groups:
+  - key: openstack.metadata.k3s_role
+    prefix: ""
+    separator: ""
+    parent_group: k3s_cluster

@@ -1,0 +1,94 @@
+- name: Provision K3s Cluster on OpenStack
+  hosts: localhost
+  gather_facts: no
+  vars:
+    # Calculate node ranges for server and agent nodes
+    server_nodes: "{{ range(1, k3s_server_count + 1) | list }}"
+    agent_nodes: "{{ range(1, k3s_agent_count + 1) | list }}"
+  tasks:
+    - name: Create a security group for K3s
+      openstack.cloud.security_group:
+        cloud: "{{ os_cloud }}"
+        name: "k3s-sg"
+        description: "Security group for k3s-sg cluster"
+
+    - name: Create rules for the K3s security group
+      openstack.cloud.security_group_rule:
+        cloud: "{{ os_cloud }}"
+        security_group: "k3s-sg"
+        direction: "{{ item.direction }}"
+        protocol: "{{ item.protocol }}"
+        port_range_min: "{{ item.port_min }}"
+        port_range_max: "{{ item.port_max }}"
+        remote_ip_prefix: "{{ item.remote | default('0.0.0.0/0') }}"
+      loop:
+        # Rules for external access
+        - { direction: 'ingress', protocol: 'tcp', port_min: 22, port_max: 22 } # SSH
+        - { direction: 'ingress', protocol: 'tcp', port_min: 80, port_max: 80 } # Rancher HTTP
+        - { direction: 'ingress', protocol: 'tcp', port_min: 443, port_max: 443 } # Rancher HTTPS
+        - { direction: 'ingress', protocol: 'tcp', port_min: 6443, port_max: 6443 } # K8s API
+        # Rules for inter-node communication
+        - { direction: 'ingress', protocol: 'udp', port_min: 8472, port_max: 8472, remote: '{{ os_network_cidr }}' } # Flannel VXLAN
+        - { direction: 'ingress', protocol: 'tcp', port_min: 10250, port_max: 10250, remote: '{{ os_network_cidr }}' } # Kubelet
+        - { direction: 'ingress', protocol: 'tcp', port_min: 2379, port_max: 2380, remote: '{{ os_network_cidr }}' } # etcd
+
+    - name: Launch server instances for the cluster
+      openstack.cloud.server:
+        cloud: "{{ os_cloud }}"
+        state: present
+        name: "k3s-server-{{ item }}"
+        image: "{{ os_image }}"
+        flavor: "{{ os_flavor }}"
+        key_name: "{{ os_key_name }}"
+        network: "{{ os_network }}"
+        security_groups: "{{ os_sec_groups }}"
+        auto_ip: yes # Assign a floating IP
+        wait: yes
+        metadata:
+          k3s_role: "server"
+      loop: "{{ server_nodes }}"
+      register: server_instances
+
+    - name: Launch agent instances for the cluster
+      openstack.cloud.server:
+        cloud: "{{ os_cloud }}"
+        state: present
+        name: "k3s-agent-{{ item }}"
+        image: "{{ os_image }}"
+        flavor: "{{ os_flavor }}"
+        key_name: "{{ os_key_name }}"
+        network: "{{ os_network }}"
+        security_groups: "{{ os_sec_groups }}"
+        auto_ip: yes # Assign a floating IP
+        wait: yes
+        metadata:
+          k3s_role: "agent"
+      loop: "{{ agent_nodes }}"
+      register: agent_instances
+      when: agent_nodes | length > 0
+
+    - name: Print the floating IPs of the server instances
+      ansible.builtin.debug:
+        msg: "Server '{{ item.server.name }}' created with Floating IP: {{ floating_ip }}"
+      loop: "{{ server_instances.results }}"
+      loop_control:
+        label: "{{ item.server.name }}"
+      vars:
+        floating_ip: >-
+          {{ (item.server.addresses | dict2items | first).value
+             | selectattr('OS-EXT-IPS:type', 'equalto', 'floating')
+             | map(attribute='addr') | first }}
+
+    - name: Print the floating IPs of the agent instances
+      ansible.builtin.debug:
+        msg: "Agent '{{ item.server.name }}' created with Floating IP: {{ floating_ip }}"
+      loop: "{{ agent_instances.results }}"
+      loop_control:
+        label: "{{ item.server.name }}"
+      vars:
+        floating_ip: >-
+          {{ (item.server.addresses | dict2items | first).value
+             | selectattr('OS-EXT-IPS:type', 'equalto', 'floating')
+             | map(attribute='addr') | first }}
+      when: agent_instances is defined and agent_instances.results is defined
+

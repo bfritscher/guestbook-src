@@ -1,0 +1,11 @@
+- name: Check and Start K3s Cluster VMs
+  hosts: k3s_cluster
+  gather_facts: no
+  connection: local
+  tasks:
+    - name: Start VM
+      openstack.cloud.server_action:
+        cloud: "{{ os_cloud }}"
+        server: "{{ inventory_hostname }}"
+        action: start
+      delegate_to: localhost
