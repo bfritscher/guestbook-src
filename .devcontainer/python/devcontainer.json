@@ -13,7 +13,7 @@
 		5000
 	],
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "pip3 install --user -r 04_container_docker/requirements.txt",
+	// "postCreateCommand": "pip3 install --user -r 04_container_docker/requirements.txt",
 
 	// Configure tool-specific properties.
 	"customizations": {

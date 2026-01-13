@@ -11,13 +11,10 @@
 			"installMaven": "true",
 			"installGradle": "false"
 		},
-		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
-		"ghcr.io/dhoeric/features/google-cloud-cli:1": {
-			"version": "latest"
-		}
-	},
-	"containerEnv": {
-		"GOOGLE_APPLICATION_CREDENTIALS": "./apikey.json"
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {
+			"moby": false
+		},
+		"ghcr.io/devcontainers/features/aws-cli:1": {}
 	},
 
 	// Configure tool-specific properties.
