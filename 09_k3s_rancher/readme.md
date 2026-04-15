@@ -14,24 +14,24 @@ Update the variables in `inventory/config`:
 - `os_key_name`: Set to your SSH key pair name from SWITCHengines
 
 ```bash
-ansible-playbook provision.yml
+ansible-playbook -i inventory provision.yml
 ```
 
 ### 2. Install K3s cluster
+
 ```bash
-ansible-playbook k3s.orchestration.site -i inventory
+ansible-playbook -i inventory k3s.orchestration.site
 ```
 
 ### 3. Install Rancher With Let's Encrypt certificates
-```bash
-ansible-playbook install-rancher.yml -i inventory
-```
-
-## Configuration
 
 Update the variables in `inventory/config`:
-- `rancher_hostname`: Set to your domain name
-- `rancher_bootstrap_password`: Set a strong password for initial setup
+- `rancher_hostname`: Set to your domain name (make sure the server IP from the previous step is correctly pointed to this domain)
+- `rancher_bootstrap_password`: Set a strong password for initial setup (you will use this to log in to Rancher for the first time)
+
+```bash
+ansible-playbook -i inventory install-rancher.yml
+```
 
 ## Access Rancher
 

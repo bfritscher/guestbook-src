@@ -16,12 +16,12 @@ ansible_host_key_checking = false
 ansible_ssh_private_key_file = "~/.ssh/id_rsa"
 
 # --- K3s Cluster Vars ---
-k3s_version = v1.32.6+k3s1
+k3s_version = v1.34.6+k3s1
 api_endpoint = "{{ hostvars[groups['server'][0]]['ansible_host'] | default(groups['server'][0]) }}"
 
 # --- Rancher Vars ---
-helm_version = "v3.17.4"
-cert_manager_version = "v1.18.2"
-rancher_chart_version = "2.11.3"
+helm_version = "v4.1.4"
+cert_manager_version = "v1.20.2"
+rancher_chart_version = "2.13.3"
 rancher_hostname = "rancher_username.duckdns.org" # Your domain pointing to server-1 ip
 rancher_bootstrap_password = "AStrongPassword123!"
