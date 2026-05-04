@@ -30,3 +30,27 @@
         cloud: "{{ os_cloud }}"
         name: "k3s-sg"
         state: absent
+
+    - name: Delete k3s router
+      openstack.cloud.router:
+        cloud: "{{ os_cloud }}"
+        state: absent
+        name: "k3s-router"
+
+    - name: Delete k3s IPv6 subnet
+      openstack.cloud.subnet:
+        cloud: "{{ os_cloud }}"
+        state: absent
+        name: "k3s-ipv6-subnet"
+
+    - name: Delete k3s IPv4 subnet
+      openstack.cloud.subnet:
+        cloud: "{{ os_cloud }}"
+        state: absent
+        name: "k3s-subnet"
+
+    - name: Delete k3s network
+      openstack.cloud.network:
+        cloud: "{{ os_cloud }}"
+        state: absent
+        name: "k3s-network"

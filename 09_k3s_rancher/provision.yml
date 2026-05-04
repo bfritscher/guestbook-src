@@ -6,6 +6,42 @@
     server_nodes: "{{ range(1, k3s_server_count + 1) | list }}"
     agent_nodes: "{{ range(1, k3s_agent_count + 1) | list }}"
   tasks:
+    - name: Create k3s network
+      openstack.cloud.network:
+        cloud: "{{ os_cloud }}"
+        name: "k3s-network"
+        state: present
+
+    - name: Create k3s IPv4 subnet
+      openstack.cloud.subnet:
+        cloud: "{{ os_cloud }}"
+        network_name: "k3s-network"
+        name: "k3s-subnet"
+        cidr: "10.13.37.0/24"
+        ip_version: 4
+        state: present
+
+    - name: Create k3s IPv6 subnet
+      openstack.cloud.subnet:
+        cloud: "{{ os_cloud }}"
+        network_name: "k3s-network"
+        name: "k3s-ipv6-subnet"
+        ip_version: 6
+        ipv6_address_mode: "dhcpv6-stateful"
+        ipv6_ra_mode: "dhcpv6-stateful"
+        subnet_pool: "public-ipv6"
+        state: present
+
+    - name: Create k3s router
+      openstack.cloud.router:
+        cloud: "{{ os_cloud }}"
+        name: "k3s-router"
+        state: present
+        network: public
+        interfaces:
+          - "k3s-subnet"
+          - "k3s-ipv6-subnet"
+
     - name: Create a security group for K3s
       openstack.cloud.security_group:
         cloud: "{{ os_cloud }}"
@@ -40,7 +76,7 @@
         image: "{{ os_image }}"
         flavor: "{{ os_flavor }}"
         key_name: "{{ os_key_name }}"
-        network: "{{ os_network }}"
+        network: "k3s-network"
         security_groups: "{{ os_sec_groups }}"
         auto_ip: yes # Assign a floating IP
         wait: yes
@@ -60,7 +96,7 @@
         image: "{{ os_image }}"
         flavor: "{{ os_flavor }}"
         key_name: "{{ os_key_name }}"
-        network: "{{ os_network }}"
+        network: "k3s-network"
         security_groups: "{{ os_sec_groups }}"
         auto_ip: yes # Assign a floating IP
         wait: yes
