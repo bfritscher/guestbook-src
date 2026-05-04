@@ -1,10 +1,10 @@
 [all:vars]
 # --- OpenStack Provisioning Vars ---
-os_cloud = "engines"
-os_image = "Ubuntu Noble 24.04 (SWITCHengines)"
-os_flavor = "m1.medium"
+os_cloud = "openstack"
+os_image = "Ubuntu 24.04 (Switch Cloud)"
+os_flavor = "c002r004"
 os_key_name = "your_key_name" # SSH key pair name in your SWITCHengines
-os_network = "private"
+os_network = "HE-Arc"
 os_sec_groups = ["default", "k3s-sg"]
 os_network_cidr = "10.0.0.0/16"
 

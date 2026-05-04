@@ -9,3 +9,5 @@ keyed_groups:
     prefix: ""
     separator: ""
     parent_group: k3s_cluster
+only_clouds :
+  - "openstack"

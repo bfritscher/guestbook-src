@@ -44,6 +44,9 @@
         security_groups: "{{ os_sec_groups }}"
         auto_ip: yes # Assign a floating IP
         wait: yes
+        boot_from_volume: yes
+        volume_size: 40
+        terminate_volume: yes
         metadata:
           k3s_role: "server"
       loop: "{{ server_nodes }}"
@@ -61,6 +64,9 @@
         security_groups: "{{ os_sec_groups }}"
         auto_ip: yes # Assign a floating IP
         wait: yes
+        boot_from_volume: yes
+        volume_size: 40
+        terminate_volume: yes
         metadata:
           k3s_role: "agent"
       loop: "{{ agent_nodes }}"

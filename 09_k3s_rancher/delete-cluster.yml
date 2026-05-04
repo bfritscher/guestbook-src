@@ -1,0 +1,32 @@
+- name: Delete K3s Cluster on OpenStack
+  hosts: localhost
+  gather_facts: no
+  vars:
+    # Calculate node ranges for server and agent nodes
+    server_nodes: "{{ range(1, k3s_server_count + 1) | list }}"
+    agent_nodes: "{{ range(1, k3s_agent_count + 1) | list }}"
+  tasks:
+    - name: Delete agent instances for the cluster
+      openstack.cloud.server:
+        cloud: "{{ os_cloud }}"
+        state: absent
+        name: "k3s-agent-{{ item }}"
+        wait: yes
+        delete_fip: yes
+      loop: "{{ agent_nodes }}"
+      when: agent_nodes | length > 0
+
+    - name: Delete server instances for the cluster
+      openstack.cloud.server:
+        cloud: "{{ os_cloud }}"
+        state: absent
+        name: "k3s-server-{{ item }}"
+        wait: yes
+        delete_fip: yes
+      loop: "{{ server_nodes }}"
+
+    - name: Delete the security group for K3s
+      openstack.cloud.security_group:
+        cloud: "{{ os_cloud }}"
+        name: "k3s-sg"
+        state: absent
